@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageVersion>1.0</PackageVersion>
+    <PackageId>RentedArraySharp</PackageId>
+    <Title>Manage large unmanaged array effectively</Title>
+    <Authors>Kemsekov</Authors>
+    <Description>
+    If you constantly need to create and remove big unmanaged arrays, this
+    package gives a way to reuse them in a elegant, effective and easy way.
+    Big chunk memory allocation is an expensive operaion, so we avoid it.
+    </Description>
+    <PackageProjectUrl>https://github.com/Kemsekov/GraphSharp</PackageProjectUrl>
+  </PropertyGroup>
+
+</Project>
