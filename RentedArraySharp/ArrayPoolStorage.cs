@@ -7,10 +7,6 @@ namespace RentedArraySharp
     /// </summary>
     public static class ArrayPoolStorage
     {
-        /// <summary>
-        /// This is pretty much limitation to how much nodes can be used in this library <br/>
-        /// Array pools this class uses have this parameter as limitation to <paramref name="maxArrayLength"/>
-        /// </summary>
         public const int MaxArrayLength = 33554432;
         /// <summary>
         /// Parameter to how much similar size arrays will be close to fetch in created array pool.<br/>
