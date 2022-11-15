@@ -20,17 +20,16 @@ namespace RentedArraySharp
         /// How much elements T can be stored here
         /// </summary>
         public int Length { get; }
-        public T this[int index]
+        public ref T this[int index]
         {
-            get => index < Length ? arrayPtr[index] : throw new IndexOutOfRangeException();
-            set
+            get
             {
-                if (index < Length) arrayPtr[index] = value;
-                else throw new IndexOutOfRangeException();
+                if (index < Length && index >= 0)
+                    return ref arrayPtr[index];
+                throw new IndexOutOfRangeException();
             }
         }
         ArrayPool<byte> pool;
-        bool returned = false;
         GCHandle handle;
         T* arrayPtr;
         readonly byte[] array;
@@ -54,7 +53,7 @@ namespace RentedArraySharp
             //because array pool contains generally random arrays
             //it means we will get array with sufficient size but it will be filled with
             //random stuff, so here we clear our work area with default value
-            Array.Fill(array, default);
+            Array.Fill(array, (byte)0);
             this.Length = length;
             this.pool = pool;
         }
@@ -62,6 +61,7 @@ namespace RentedArraySharp
         {
             Dispose();
         }
+        bool returned = false;
         public void Dispose()
         {
             if (returned) return;
@@ -69,6 +69,7 @@ namespace RentedArraySharp
             //don't forget to free pinned object so GC can move it a bit,
             //do memory defragmentation and so on...
             handle.Free();
+            arrayPtr = (T*)IntPtr.Zero;
             returned = true;
         }
         /// <summary>
@@ -76,8 +77,7 @@ namespace RentedArraySharp
         /// </summary>
         public void Fill(T value)
         {
-            for (int i = 0; i < Length; i++)
-                arrayPtr[i] = value;
+            AsSpan(0, Length).Fill(value);
         }
         /// <summary>
         /// Method to return element at some index by <see langword="ref"/>
@@ -87,7 +87,18 @@ namespace RentedArraySharp
             if (index >= Length || index < 0) throw new IndexOutOfRangeException();
             return ref arrayPtr[index];
         }
-        ref T UnsafeAt(int index) => ref arrayPtr[index];
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns>Specified chunk of array memory as span </returns>
+        public Span<T> AsSpan(int start, int length)
+        {
+            return new Span<T>(arrayPtr + start, length);
+        }
+        /// <summary>
+        /// Gets ref value by index without bounds-checking.<br/>
+        /// A bit faster. Use it when you sure about your index bounds.
+        /// </summary>
+        public ref T UnsafeAt(int index) => ref arrayPtr[index];
 
         public IEnumerator<T> GetEnumerator()
         {

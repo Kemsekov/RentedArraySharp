@@ -1,5 +1,4 @@
 using System.Buffers;
-
 namespace RentedArraySharp
 {
 
@@ -18,22 +17,6 @@ namespace RentedArraySharp
         /// </summary>
         public const int MaxArraysPerBucket = 128;
         static readonly ArrayPool<byte> ByteArrayPool = ArrayPool<byte>.Create(MaxArrayLength, MaxArraysPerBucket);
-        public static RentedArray<int> RentIntArray(int length)
-        {
-            return new(length, ByteArrayPool);
-        }
-        public static RentedArray<uint> RentUintArray(int length)
-        {
-            return new(length, ByteArrayPool);
-        }
-        public static RentedArray<float> RentFloatArray(int length)
-        {
-            return new(length, ByteArrayPool);
-        }
-        public static RentedArray<byte> RentByteArray(int length)
-        {
-            return new(length, ByteArrayPool);
-        }
         public static RentedArray<T> RentArray<T>(int length)
         where T : unmanaged
         {
