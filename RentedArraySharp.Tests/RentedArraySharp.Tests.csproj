@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RentedArraySharp\RentedArraySharp.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -13,6 +13,9 @@ namespace RentedArraySharp
         /// </summary>
         public const int MaxArraysPerBucket = 128;
         static readonly ArrayPool<byte> ByteArrayPool = ArrayPool<byte>.Create(MaxArrayLength, MaxArraysPerBucket);
+        /// <summary>
+        /// Rents array of given unmanaged type with given length
+        /// </summary>
         public static RentedArray<T> RentArray<T>(int length)
         where T : unmanaged
         {
