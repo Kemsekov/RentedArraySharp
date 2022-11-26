@@ -35,7 +35,7 @@ namespace RentedArraySharp
         /// <summary>
         /// Underlying array. Be cautions when working with it. Don't return it to pool manually, but call <see cref="Dispose"/>.
         /// </summary>
-        public readonly byte[] array;
+        public readonly byte[] RawArray;
 
         /// <summary>
         /// Creates new instance of <see cref="RentedArray"/>
@@ -46,17 +46,17 @@ namespace RentedArraySharp
         {
             //Here we calc required size for array to be rented
             int size = Unsafe.SizeOf<T>();
-            this.array = pool.Rent(size * length);
+            this.RawArray = pool.Rent(size * length);
             //after we rented an array we need to pin it so GC won't move
             //it's position in VRAM
-            this.handle = GCHandle.Alloc(array, GCHandleType.Pinned);
+            this.handle = GCHandle.Alloc(RawArray, GCHandleType.Pinned);
             //after it pinned we can easily take a pointer to array first element
             //and index it like we do it in C/C++
-            this.arrayPtr = (T*)Unsafe.AsPointer(ref array[0]);
+            this.arrayPtr = (T*)Unsafe.AsPointer(ref RawArray[0]);
             //because array pool contains generally random arrays
             //it means we will get array with sufficient size but it will be filled with
             //random stuff, so here we clear our work area with default value
-            Array.Fill(array, (byte)0);
+            Array.Fill(RawArray, (byte)0);
             this.Length = length;
             this.pool = pool;
         }
@@ -68,7 +68,7 @@ namespace RentedArraySharp
         public void Dispose()
         {
             if (returned) return;
-            pool.Return(array);
+            pool.Return(RawArray);
             //don't forget to free pinned object so GC can move it a bit,
             //do memory defragmentation and so on...
             handle.Free();
@@ -90,8 +90,12 @@ namespace RentedArraySharp
             if (index >= Length || index < 0) throw new IndexOutOfRangeException();
             return ref arrayPtr[index];
         }
-        /// <param name="start"></param>
-        /// <param name="length"></param>
+        /// <summary>
+        /// Method to get span of underlying array. Be caution, this method doesn't check
+        /// span borders, so it is up to you.
+        /// </summary>
+        /// <param name="start">Start index of array you want to span</param>
+        /// <param name="length">How many elements to span</param>
         /// <returns>Specified chunk of array memory as span </returns>
         public Span<T> AsSpan(int start, int length)
         {
@@ -111,7 +115,7 @@ namespace RentedArraySharp
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return array.GetEnumerator();
+            return RawArray.GetEnumerator();
         }
     }
 }

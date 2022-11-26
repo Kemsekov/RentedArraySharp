@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageVersion>1.0.2</PackageVersion>
+    <PackageVersion>1.0.3</PackageVersion>
     <PackageId>RentedArraySharp</PackageId>
     <Title>Manage large unmanaged array effectively</Title>
     <Authors>Kemsekov</Authors>
