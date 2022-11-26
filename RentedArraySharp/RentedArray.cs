@@ -32,7 +32,10 @@ namespace RentedArraySharp
         ArrayPool<byte> pool;
         GCHandle handle;
         T* arrayPtr;
-        readonly byte[] array;
+        /// <summary>
+        /// Underlying array. Be cautions when working with it. Don't return it to pool manually, but call <see cref="Dispose"/>.
+        /// </summary>
+        public readonly byte[] array;
 
         /// <summary>
         /// Creates new instance of <see cref="RentedArray"/>

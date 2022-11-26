@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageVersion>1.0</PackageVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <PackageId>RentedArraySharp</PackageId>
     <Title>Manage large unmanaged array effectively</Title>
     <Authors>Kemsekov</Authors>
@@ -13,7 +13,7 @@
     package gives a way to reuse them in a elegant, effective and easy way.
     Big chunk memory allocation is an expensive operaion, so we avoid it.
     </Description>
-    <PackageProjectUrl>https://github.com/Kemsekov/GraphSharp</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Kemsekov/RentedArraySharp</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
