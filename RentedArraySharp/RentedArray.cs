@@ -32,6 +32,7 @@ namespace RentedArraySharp
         ArrayPool<byte> pool;
         GCHandle handle;
         T* arrayPtr;
+        object lockObject;
         /// <summary>
         /// Underlying array. Be cautions when working with it. Don't return it to pool manually, but call <see cref="Dispose"/>.
         /// </summary>
@@ -46,20 +47,22 @@ namespace RentedArraySharp
         {
             //Here we calc required size for array to be rented
             int size = Unsafe.SizeOf<T>();
-            this.RawArray = pool.Rent(size * length);
+            RawArray = pool.Rent(size * length);
             //after we rented an array we need to pin it so GC won't move
             //it's position in VRAM
-            this.handle = GCHandle.Alloc(RawArray, GCHandleType.Pinned);
+            handle = GCHandle.Alloc(RawArray, GCHandleType.Pinned);
             //after it pinned we can easily take a pointer to array first element
             //and index it like we do it in C/C++
-            this.arrayPtr = (T*)Unsafe.AsPointer(ref RawArray[0]);
+            arrayPtr = (T*)Unsafe.AsPointer(ref RawArray[0]);
             //because array pool contains generally random arrays
             //it means we will get array with sufficient size but it will be filled with
             //random stuff, so here we clear our work area with default value
             Array.Fill(RawArray, (byte)0);
-            this.Length = length;
+            Length = length;
             this.pool = pool;
+            lockObject = new();
         }
+
         ~RentedArray()
         {
             Dispose();
@@ -67,13 +70,16 @@ namespace RentedArraySharp
         bool returned = false;
         public void Dispose()
         {
-            if (returned) return;
-            pool.Return(RawArray);
-            //don't forget to free pinned object so GC can move it a bit,
-            //do memory defragmentation and so on...
-            handle.Free();
-            arrayPtr = (T*)IntPtr.Zero;
-            returned = true;
+            lock (lockObject)
+            {
+                if (returned) return;
+                pool.Return(RawArray);
+                //don't forget to free pinned object so GC can move it a bit,
+                //do memory defragmentation and so on...
+                handle.Free();
+                arrayPtr = (T*)IntPtr.Zero;
+                returned = true;
+            }
         }
         /// <summary>
         /// Fills whole array with given value

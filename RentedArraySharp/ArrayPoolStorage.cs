@@ -7,7 +7,7 @@ namespace RentedArraySharp
     /// </summary>
     public static class ArrayPoolStorage
     {
-        public const int MaxArrayLength = 33554432;
+        public const int MaxArrayLength = int.MaxValue/16;
         /// <summary>
         /// Parameter to how much similar size arrays will be close to fetch in created array pool.<br/>
         /// </summary>
